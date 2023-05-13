@@ -1,0 +1,21 @@
+pipeline {
+  agent { label 'slave1' }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+  stages {
+    stage('Container') {
+      steps {
+        sh 'docker run -dt -p 8000:8000 salma22/django-app '
+      }
+    }
+  }
+  post {
+     success {
+            slackSend color: "good", message: "Succees"
+        } 
+        failure{
+      slackSend color: "bad", message: "failure"
+    }
+  }
+}
